@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts-db
+  serviceName: "carts-db"  # Required for StatefulSets to manage network identities
+  template:
+    metadata:
+      labels:
+        name: carts-db
+    spec:
+      containers:
+      - name: carts-db
+        image: {{if .Values.global.registry}}{{ .Values.global.registry }}/{{end}}{{ .Values.cartsdb.image.repo }}:{{ .Values.cartsdb.image.tag }}
+        ports:
+        - name: mongo
+          containerPort: 27017
+        resources:
+{{ toYaml .Values.cartsdb.resources | indent 10 }}
+        securityContext:
+          capabilities:
+            drop:
+              - all
+            add:
+              - CHOWN
+              - SETGID
+              - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+        - name: mongo-data
+          mountPath: /data/db  # Mount path for MongoDB data directory
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi  # Adjust storage size as needed

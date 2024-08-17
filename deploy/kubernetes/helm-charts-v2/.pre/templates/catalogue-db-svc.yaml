@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue-db
+  labels:
+    name: catalogue-db
+spec:
+  type: ExternalName
+  externalName: {{ .Values.cataloguedb.service.externalName }}

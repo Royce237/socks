@@ -1,0 +1,19 @@
+cartsdb:
+  service:
+    externalName: 172.18.0.2
+
+cataloguedb:
+  service:
+    externalName: 172.18.0.5
+
+ordersdb:
+  service:
+    externalName: 172.18.0.3
+
+sessiondb:
+  service:
+    externalName: 172.18.0.2
+
+userdb:
+  service:
+    externalName: 172.18.0.4
